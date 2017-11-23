@@ -12,8 +12,9 @@
                   [http-kit "2.2.0"]
                   [ring "1.6.1"]
                   [ring/ring-defaults "0.3.0"]              ; Includes `ring-anti-forgery`, etc.
-                  [compojure "1.6.0"]                       ; Or routing lib of your choice
+                  [compojure "1.6.0"]
                   [reagent "0.7.0"]
+                  [reagent-utils "0.2.1"]
                   [com.cognitect/transit-clj "0.8.290"]
                   [com.cognitect/transit-cljs "0.8.239"]])
 
