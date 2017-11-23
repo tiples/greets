@@ -25,6 +25,7 @@
 (deftask dev
   []
   (comp
+   (watch)
    (cljs :source-map true
          :optimizations :none)
    (speak)

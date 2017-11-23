@@ -1,5 +1,6 @@
-(ns greets.app-server)
+(ns greets.app-server
+    (:require [greets.sente-server :as sente-server]))
 
 
 (defn -main "For `lein run`, etc." []
-      (println "Ribit!"))
+      (sente-server/start! 3001))
