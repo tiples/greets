@@ -36,8 +36,9 @@
 ;;;; Define our Sente channel socket (chsk) server
 
 (let [;; Seriaztion format, must use same val for client + server:
-      packer :edn                                           ; Default packer, a good choice in most cases
-      ;; (sente-transit/get-transit-packer) ; Needs Transit dep
+      packer
+      ;; :edn                                           ; Default packer, a good choice in most cases
+      (sente-transit/get-transit-packer) ; Needs Transit dep
 
       chsk-server
       (sente/make-channel-socket-server!
