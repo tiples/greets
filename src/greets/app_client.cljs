@@ -4,6 +4,12 @@
             [reagent.core :as reagent :refer [atom]]
             [taoensso.sente :as sente :refer (cb-success?)]))
 
+(defn calling-component
+      []
+      [:p "Ribits"])
+
 (defn start!
       []
-      (client/start!))
+      (client/start!)
+      (reagent/render-component [calling-component]
+                                (.getElementById js/document "container")))
