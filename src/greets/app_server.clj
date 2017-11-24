@@ -8,10 +8,6 @@
 
 (defn -main "For `lein run`, etc."
       []
-      (let [accounts-filename-map (files/resolve-file "data" "accounts" nil "edn")
-            accounts-filename (files/file-str accounts-filename-map)
-            _ (println "Loading file" accounts-filename)
-            accounts (slurp accounts-filename)
-            accounts-map (edn/read-string accounts)]
-           (println accounts-map))
+      (files/load-edn-file (files/resolve-file "data" "accounts" nil "edn") atoms/accounts)
+      (println @atoms/accounts)
       (sente-server/start! 3001))

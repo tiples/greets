@@ -1,5 +1,6 @@
 (ns greets.files
   (:require
+    [clojure.edn :as edn]
     [clojure.java.io :as io]
     [clojure.string :as str]))
 
@@ -130,3 +131,11 @@
             post (str "." extension)]
         (println "***Error*** No file matching" (str pre "*" post) "in folder" folder)
         (throw (Exception. "Missing file"))))))
+
+(defn load-edn-file
+      [edn-filemap contentmap-atom]
+      (let [edn-filename (file-str edn-filemap)
+            _ (println "Loading file" edn-filename)
+            edn-string (slurp edn-filename)
+            edn-map (edn/read-string edn-string)]
+           (reset! contentmap-atom edn-map)))
