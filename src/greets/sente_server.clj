@@ -3,6 +3,7 @@
     {:author "Peter Taoussanis (@ptaoussanis)"}
 
     (:require
+      [greets.atoms :as atoms]
       [clojure.string :as str]
       [ring.util.response :as response]
       [ring.middleware.defaults]
