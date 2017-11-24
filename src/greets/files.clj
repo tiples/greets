@@ -1,6 +1,7 @@
-(ns URT.files
-  (require [clojure.java.io :as io]
-           [clojure.string :as str]))
+(ns greets.files
+  (:require
+    [clojure.java.io :as io]
+    [clojure.string :as str]))
 
 ;To access a file, you need:
 ;1. the folder it is in
@@ -40,8 +41,7 @@
 
 (defn file-str
   [file-map]
-  (let [
-        folder (:folder file-map)
+  (let [folder (:folder file-map)
         prefix (:prefix file-map)
         base (:base file-map)
         label (:label file-map)
