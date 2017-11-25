@@ -6,6 +6,11 @@
     [greets.atoms :as atoms]
     [greets.files :as files]))
 
+(defmethod sente-server/-event-msg-handler
+  :chsk/uidport-close ;todo close session, if any
+  [ev-msg]
+  ())
+
 (defn landing-pg-handler
   [ring-req]
   (let [params (:params ring-req)

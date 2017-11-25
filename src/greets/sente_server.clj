@@ -122,11 +122,15 @@
                 (when ?reply-fn
                       (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
 
-(defmethod -event-msg-handler :example/test-rapid-push
-           [ev-msg] (test-fast-server>user-pushes))
+(defmethod -event-msg-handler
+  :chsk/ws-ping
+  [ev-msg]
+  ())
 
-
-;; TODO Add your (defmethod -event-msg-handler <event-id> [ev-msg] <body>)s here...
+(defmethod -event-msg-handler
+  :chsk/uidport-open
+  [ev-msg]
+  ())
 
 ;;;; Sente event router (our `event-msg-handler` loop)
 
