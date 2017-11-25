@@ -13,6 +13,7 @@
                   [ring "1.6.1"]
                   [ring/ring-defaults "0.3.0"]              ; Includes `ring-anti-forgery`, etc.
                   [compojure "1.6.0"]
+                  [hiccup "1.0.5"]
                   [reagent "0.7.0"]
                   [reagent-utils "0.2.1"]
                   [com.cognitect/transit-clj "0.8.290"]
