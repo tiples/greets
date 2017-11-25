@@ -5,17 +5,13 @@
             [taoensso.sente :as sente :refer (cb-success?)]))
 
 (defn calling-component
-      []
-      (let [hdn (.getElementById js/document "fudge")
-            atts (.-attributes hdn)]
-           (last (for [i (range (.-length atts))]
-                      (.log js/console (str (.-name (aget atts i)) " "
-                                               (.-value (aget atts i))))))
-           )
-      [:p "Ribits"])
+  []
+  (let [hdn (.getElementById js/document "fudge")
+        value (.getAttribute hdn "value")]
+    [:p value]))
 
 (defn start!
-      []
-      (client/start!)
-      (reagent/render-component [calling-component]
-                                (.getElementById js/document "container")))
+  []
+  (client/start!)
+  (reagent/render-component [calling-component]
+                            (.getElementById js/document "container")))
