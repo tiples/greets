@@ -6,9 +6,13 @@
 
 (defn calling-component
   []
-  (let [hdn (.getElementById js/document "fudge")
-        value (.getAttribute hdn "value")]
-    [:p value]))
+  (let [token-status-message-element (.getElementById js/document "tokenStatusMessage")
+        token-status-message (.getAttribute token-status-message-element "value")
+        token-element (.getElementById js/document "token")
+        token (.getAttribute token-element "value")]
+    [:div
+     (if (some? token-status-message) [:p token-status-message])
+     ]))
 
 (defn start!
   []

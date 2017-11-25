@@ -14,8 +14,11 @@
 (defn landing-pg-handler
   [ring-req]
   (let [params (:params ring-req)
-        token (:token params)]
-    (println token)
+        token (:token params)
+        token-status-message (if (nil? token)
+                               (str "Please provide your email address and we will send you a "
+                                    "token that you can use to login.")
+                               nil)]
     (hiccup/html
       [:head
        [:meta {:charset "utf-8"}]
@@ -23,7 +26,8 @@
        [:meta {:name "description" :content ""}]
        [:title "greets"]]
       [:body
-       [:input {:type "hidden" :id "fudge" :name "foo" :value token}]
+       [:input {:type "hidden" :id "tokenStatusMessage" :value token-status-message}]
+       [:input {:type "hidden" :id "token" :value token}]
        [:div {:id "container"}]
        [:script {:type "text/javascript" :src "app.js"}]])))
 
@@ -31,5 +35,4 @@
   []
   (reset! atoms/app-handler landing-pg-handler)
   (files/load-edn-file (files/resolve-file "data" "accounts" nil "edn") atoms/accounts)
-  (println @atoms/accounts)
   (sente-server/start! 3001))
