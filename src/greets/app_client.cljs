@@ -6,6 +6,12 @@
 
 (defn calling-component
       []
+      (let [hdn (.getElementById js/document "fudge")
+            atts (.-attributes hdn)]
+           (last (for [i (range (.-length atts))]
+                      (.log js/console (str (.-name (aget atts i)) " "
+                                               (.-value (aget atts i))))))
+           )
       [:p "Ribits"])
 
 (defn start!
