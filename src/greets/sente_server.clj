@@ -75,7 +75,7 @@
            {:status 200 :session (assoc session :uid user-id)}))
 
 (defroutes ring-routes
-           (GET "/" ring-req (response/content-type (response/resource-response "index.html") "text/html"))
+           (GET "/" ring-req (@atoms/app-handler ring-req))
            (GET "/chsk" ring-req (ring-ajax-get-or-ws-handshake ring-req))
            (POST "/chsk" ring-req (ring-ajax-post ring-req))
            (route/resources "/")                            ; Static files, notably public/main.js (our cljs target)
