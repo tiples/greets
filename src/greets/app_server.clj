@@ -3,7 +3,7 @@
     [clojure.edn :as edn]
     [hiccup.core :as hiccup]
     [greets.sente-server :as sente-server]
-    [greets.atoms :as atoms]
+    [greets.atoms-server :as atoms]
     [greets.files :as files]))
 
 (defmethod sente-server/-event-msg-handler

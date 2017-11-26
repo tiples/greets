@@ -7,10 +7,18 @@
 
 (defn get-login-token
   []
-  (let [token-status-message-element (.getElementById js/document "tokenStatusMessage")
-        token-status-message (.getAttribute token-status-message-element "value")]
-    [:div
-     [:p token-status-message]]))
+  [:div
+   [:p @atoms/token-status-message]
+   [:form
+    {:on-submit
+     (fn [e]
+       (.preventDefault e)
+       (reset! atoms/email-address (.. e -target -elements -message -value)))}
+    [:label "Email address: "]
+    [:input {:name "message" :type "text" :autoFocus true}]
+    [:input {:type "submit" :value "send"}]]
+   (if (some? @atoms/email-address)
+     [:p "requesting token"])])
 
 (defn got-login-token
   [token]
@@ -18,8 +26,12 @@
 
 (defn calling-component
   []
-  (let [token-element (.getElementById js/document "token")
-        token (.getAttribute token-element "value")]
+  (reagent/with-let
+    [token-element (.getElementById js/document "token")
+     token (.getAttribute token-element "value")
+     token-status-message-element (.getElementById js/document "tokenStatusMessage")
+     token-status-message (.getAttribute token-status-message-element "value")]
+    (reset! atoms/token-status-message token-status-message)
     (if (some? token)
       [got-login-token token]
       [get-login-token])))
