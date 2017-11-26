@@ -6,22 +6,22 @@
     [greets.atoms-server :as atoms]
     [greets.files :as files]))
 
-(defmethod sente-server/-event-msg-handler
-  :chsk/uidport-close ;todo close session, if any
+(defmethod sente-server/-event-msg-handler :chsk/uidport-close                                       ;todo close session, if any
   [ev-msg]
   ())
 
-(defmethod sente-server/-event-msg-handler
-  :login-token/request
+(defmethod sente-server/-event-msg-handler :login-token/request
   [ev-msg]
   (let [client-id (:client-id ev-msg)
         ?data (:?data ev-msg)
-        email-address (:email-address ?data)]
-    (println client-id)
-    (println email-address)
+        email-address (:email-address ?data)
+        email-addresses @atoms/email-addresses
+        msg (if (contains? email-addresses email-address)
+              "Sending the login token. Please check your emails."
+              "Unknown email address.")]
     (sente-server/chsk-send! client-id
                              [:login-token/token-status-message
-                              {:value "Unknown email address."}])))
+                              {:value msg}])))
 
 (defn landing-pg-handler
   [ring-req]
@@ -43,8 +43,20 @@
        [:div {:id "container"}]
        [:script {:type "text/javascript" :src "app.js"}]])))
 
+(defn register-email-addresses
+  []
+  (reset! atoms/email-addresses
+          (reduce
+            (fn [email-addresses e]
+              (let [email-address (:email (val e))]
+                (conj email-addresses email-address)))
+            #{}
+            (:accounts @atoms/accounts))))
+
 (defn -main "For `lein run`, etc."
   []
   (reset! atoms/app-handler landing-pg-handler)
   (files/load-edn-file (files/resolve-file "data" "accounts" nil "edn") atoms/accounts)
+  (register-email-addresses)
+  (println @atoms/email-addresses)
   (sente-server/start! 3001))
