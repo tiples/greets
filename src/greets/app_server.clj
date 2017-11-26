@@ -11,6 +11,15 @@
   [ev-msg]
   ())
 
+(defmethod sente-server/-event-msg-handler
+  :login-token/request
+  [ev-msg]
+  (let [client-id (:client-id ev-msg)
+        ?data (:?data ev-msg)
+        email-address (:email-address ?data)]
+    (println client-id)
+    (println email-address)))
+
 (defn landing-pg-handler
   [ring-req]
   (let [params (:params ring-req)
