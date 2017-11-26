@@ -13,7 +13,8 @@
     {:on-submit
      (fn [e]
        (.preventDefault e)
-       (reset! atoms/email-address (.. e -target -elements -message -value)))}
+       (reset! atoms/email-address (.. e -target -elements -message -value))
+       (chsk-send! [:login-token/request {:email-address @atoms/email-address}]))}
     [:label "Email address: "]
     [:input {:name "message" :type "text" :autoFocus true}]
     [:input {:type "submit" :value "send"}]]
