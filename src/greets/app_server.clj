@@ -16,8 +16,8 @@
   (let [params (:params ring-req)
         token (:token params)
         token-status-message (if (nil? token)
-                               (str "Please provide your email address and we will send you a "
-                                    "token that you can use to login.")
+                               (str "Please enter your registered email address "
+                                    "to receive a one-time login token.")
                                nil)]
     (hiccup/html
       [:head
