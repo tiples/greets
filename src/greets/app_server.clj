@@ -29,7 +29,7 @@
         token (:token params)
         token-status-message (if (nil? token)
                                (str "Please enter your registered email address "
-                                    "to receive a one-time login token.")
+                                    "(above) to receive a one-time login token.")
                                nil)]
     (hiccup/html
       [:head
