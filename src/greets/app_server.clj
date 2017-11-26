@@ -18,7 +18,10 @@
         ?data (:?data ev-msg)
         email-address (:email-address ?data)]
     (println client-id)
-    (println email-address)))
+    (println email-address)
+    (sente-server/chsk-send! client-id
+                             [:login-token/token-status-message
+                              {:value "Unknown email address."}])))
 
 (defn landing-pg-handler
   [ring-req]
