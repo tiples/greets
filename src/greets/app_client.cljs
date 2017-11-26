@@ -8,7 +8,6 @@
 (defn get-login-token
   []
   [:div
-   [:p @atoms/token-status-message]
    [:form
     {:on-submit
      (fn [e]
@@ -18,8 +17,11 @@
     [:label "Email address: "]
     [:input {:name "message" :type "text" :autoFocus true}]
     [:input {:type "submit" :value "send"}]]
-   (if (some? @atoms/email-address)
-     [:p "requesting token"])])
+   [:p @atoms/token-status-message]])
+
+(defmethod client/chsk-recv :login-token/token-status-message
+  [id ?data]
+  (reset! atoms/token-status-message (:value ?data)))
 
 (defn got-login-token
   [token]

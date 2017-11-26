@@ -18,9 +18,9 @@
 ;(timbre/set-level! :debug)
 
 (defn ->output! [fmt & args]
-      (let [msg (apply encore/format fmt args)]
-           (timbre/debug msg)
-           (.log js/console msg)))
+  (let [msg (apply encore/format fmt args)]
+    (timbre/debug msg)
+    (.log js/console msg)))
 
 (->output! "ClojureScript appears to have loaded correctly.")
 
@@ -30,52 +30,53 @@
       ;; Serializtion format, must use same val for client + server:
       packer
       ;; :edn                                           ; Default packer, a good choice in most cases
-      (sente-transit/get-transit-packer) ; Needs Transit dep
+      (sente-transit/get-transit-packer)                    ; Needs Transit dep
 
       {:keys [chsk ch-recv send-fn state]}
       (sente/make-channel-socket-client!
         "/chsk"                                             ; Must match server Ring routing URL
-        {:type :auto
+        {:type   :auto
          :packer packer})]
 
-     (def chsk chsk)
-     (def ch-chsk ch-recv)                                  ; ChannelSocket's receive channel
-     (def chsk-send! send-fn)                               ; ChannelSocket's send API fn
-     (def chsk-state state)                                 ; Watchable, read-only atom
-     )
+  (def chsk chsk)
+  (def ch-chsk ch-recv)                                     ; ChannelSocket's receive channel
+  (def chsk-send! send-fn)                                  ; ChannelSocket's send API fn
+  (def chsk-state state)                                    ; Watchable, read-only atom
+  )
 
 ;;;; Sente event handlers
 
-(defmulti -event-msg-handler
+(defmulti event-msg-handler
           "Multimethod to handle Sente `event-msg`s"
           :id                                               ; Dispatch on event-id
           )
 
-(defn event-msg-handler
-      "Wraps `-event-msg-handler` with logging, error catching, etc."
-      [{:as ev-msg :keys [id ?data event]}]
-      (-event-msg-handler ev-msg))
+(defmethod event-msg-handler
+  :default                                                  ; Default/fallback case (no other matching handler)
+  [{:as ev-msg :keys [event]}]
+  (->output! "Unhandled event: %s" event))
 
-(defmethod -event-msg-handler
-           :default                                         ; Default/fallback case (no other matching handler)
-           [{:as ev-msg :keys [event]}]
-           (->output! "Unhandled event: %s" event))
+(defmethod event-msg-handler :chsk/state
+  [{:as ev-msg :keys [?data]}]
+  (let [[old-state-map new-state-map] (have vector? ?data)]
+    (if (:first-open? new-state-map)
+      (->output! "Channel socket successfully established!: %s" new-state-map)
+      (->output! "Channel socket state change: %s" new-state-map))))
 
-(defmethod -event-msg-handler :chsk/state
-           [{:as ev-msg :keys [?data]}]
-           (let [[old-state-map new-state-map] (have vector? ?data)]
-                (if (:first-open? new-state-map)
-                  (->output! "Channel socket successfully established!: %s" new-state-map)
-                  (->output! "Channel socket state change: %s" new-state-map))))
+(defmulti chsk-recv (fn [id ?data] id))
 
-(defmethod -event-msg-handler :chsk/recv
-           [{:as ev-msg :keys [?data]}]
-           (->output! "Push event from server: %s" ?data))
+(defmethod chsk-recv :default                               ; Fallback
+  [id ?data]
+  (.log js/console (str "Unhandled message: " id)))
 
-(defmethod -event-msg-handler :chsk/handshake
-           [{:as ev-msg :keys [?data]}]
-           (let [[?uid ?csrf-token ?handshake-data] ?data]
-                (->output! "Handshake: %s" ?data)))
+(defmethod event-msg-handler :chsk/recv
+  [{:as ev-msg :keys [?data]}]
+  (chsk-recv (?data 0) (?data 1)))
+
+(defmethod event-msg-handler :chsk/handshake
+  [{:as ev-msg :keys [?data]}]
+  (let [[?uid ?csrf-token ?handshake-data] ?data]
+    (->output! "Handshake: %s" ?data)))
 
 ;; TODO Add your (defmethod -event-msg-handler <event-id> [ev-msg] <body>)s here...
 
@@ -84,16 +85,16 @@
 (defonce router_ (atom nil))
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []
-      (stop-router!)
-      (reset! router_
-              (sente/start-client-chsk-router!
-                ch-chsk event-msg-handler)))
+  (stop-router!)
+  (reset! router_
+          (sente/start-client-chsk-router!
+            ch-chsk event-msg-handler)))
 
 ;;;; Init stuff
 
 (defn start!
-      []
-      (start-router!)
-      )
+  []
+  (start-router!)
+  )
 
 (defonce _start-once (start!))
