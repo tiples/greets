@@ -36,6 +36,11 @@
 
 ;;;; Define our Sente channel socket (chsk) server
 
+
+(defn mkuid [x]
+  (let [cid (:client-id x)]
+    cid))
+
 (let [;; Seriaztion format, must use same val for client + server:
       packer
       ;; :edn                                           ; Default packer, a good choice in most cases
@@ -43,7 +48,7 @@
 
       chsk-server
       (sente/make-channel-socket-server!
-        (get-sch-adapter) {:packer packer})
+        (get-sch-adapter) {:packer packer :user-id-fn mkuid})
 
       {:keys [ch-recv send-fn connected-uids
               ajax-post-fn ajax-get-or-ws-handshake-fn]}
