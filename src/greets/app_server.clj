@@ -4,7 +4,8 @@
     [hiccup.core :as hiccup]
     [greets.sente-server :as sente-server]
     [greets.atoms-server :as atoms]
-    [greets.files :as files]))
+    [greets.files :as files]
+    [greets.login-tokens :as login-tokens]))
 
 (defmethod sente-server/-event-msg-handler :chsk/uidport-close                                       ;todo close session, if any
   [ev-msg]
@@ -58,5 +59,5 @@
   (reset! atoms/app-handler landing-pg-handler)
   (files/load-edn-file (files/resolve-file "data" "accounts" nil "edn") atoms/accounts)
   (register-email-addresses)
-  (println @atoms/email-addresses)
+  (login-tokens/initialize 10) ;max token life is 10 min
   (sente-server/start! 3001))

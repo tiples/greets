@@ -12,32 +12,32 @@
     (reset! atoms/login-tokens
             (reduce
               (fn [login-tokens e]
-                (let [account (key e)
+                (let [token (key e)
                       m (val e)
                       expires (:expires m)]
                   (if (> tm expires)
                     login-tokens
-                    (assoc login-tokens account m))))
+                    (assoc login-tokens token m))))
               {}
               @atoms/login-tokens))))
 
-(defn get-token
-  [account]
+(defn get-account
+  [token]
   (purge-tokens)
-  (get-in @atoms/login-tokens [account :token]))
+  (get-in @atoms/login-tokens [token :account]))
 
 (defn remove-token
-  [account]
-  (let [token (get-token account)]
-    (swap! atoms/login-tokens dissoc account)
-    token))
+  [token]
+  (let [account (get-account token)]
+    (swap! atoms/login-tokens dissoc token)
+    account))
 
 (defn make-token
   [account]
   (purge-tokens)
   (let [token (uuid)]
-    (swap! atoms/login-tokens assoc account {:token   token
-                                             :expires (+ (time-millis) @atoms/max-token-life-millis)})
+    (swap! atoms/login-tokens assoc token {:account account
+                                           :expires (+ (time-millis) @atoms/max-token-life-millis)})
     token))
 
 (defn initialize
