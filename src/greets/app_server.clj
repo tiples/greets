@@ -7,9 +7,18 @@
     [greets.files :as files]
     [greets.login-tokens :as login-tokens]))
 
-(defmethod sente-server/-event-msg-handler :chsk/uidport-close                                       ;todo close session, if any
+(defmethod sente-server/-event-msg-handler :chsk/uidport-close ;todo close session, if any
   [ev-msg]
   ())
+
+(defn valid-token-request
+  [client-id email-address]
+  (let [account (get @atoms/email-addresses email-address)
+        token (login-tokens/make-token account)]
+    (println account token)
+    (sente-server/chsk-send! client-id
+                             [:login-token/token-status-message
+                              {:value "Sending the login token. Please check your emails."}])))
 
 (defmethod sente-server/-event-msg-handler :login-token/request
   [ev-msg]
@@ -17,12 +26,12 @@
         ?data (:?data ev-msg)
         email-address (:email-address ?data)
         email-addresses @atoms/email-addresses
-        msg (if (contains? email-addresses email-address)
-              "Sending the login token. Please check your emails."
-              "Unknown email address.")]
-    (sente-server/chsk-send! client-id
-                             [:login-token/token-status-message
-                              {:value msg}])))
+        valid-email-address (contains? email-addresses email-address)]
+    (if valid-email-address
+      (valid-token-request client-id email-address)
+      (sente-server/chsk-send! client-id
+                               [:login-token/token-status-message
+                                {:value "Unknown email address."}]))))
 
 (defn landing-pg-handler
   [ring-req]
@@ -60,5 +69,5 @@
   (reset! atoms/app-handler landing-pg-handler)
   (files/load-edn-file (files/resolve-file "data" "accounts" nil "edn") atoms/accounts)
   (register-email-addresses)
-  (login-tokens/initialize 10) ;max token life is 10 min
+  (login-tokens/initialize 10)                              ;max token life is 10 min
   (sente-server/start! 3001))
