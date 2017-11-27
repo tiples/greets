@@ -15,11 +15,19 @@
 (defn valid-token-request
   [client-id email-address]
   (let [account (get @atoms/email-addresses email-address)
-        token (login-tokens/make-token account)]
-    (println account token)
+        token (login-tokens/make-token account)
+        postal-response (postal/send-message (:connection @atoms/postal)
+                                             {:from    (get-in @atoms/postal [:connection :user])
+                                              :to      email-address
+                                              :subject "login token"
+                                              :body    token})
+        success (= (:error postal-response) :SUCCESS)]
+    (if (not success) (println postal-response))
     (sente-server/chsk-send! client-id
                              [:login-token/token-status-message
-                              {:value "Sending the login token. Please check your emails."}])))
+                              {:value (if success
+                                        "Sending the login token. Please check your emails."
+                               "There was an error encountered when sending the login token")}])))
 
 (defmethod sente-server/-event-msg-handler :login-token/request
   [ev-msg]
