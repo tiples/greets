@@ -16,11 +16,15 @@
   [client-id email-address]
   (let [account (get @atoms/email-addresses email-address)
         token (login-tokens/make-token account)
+        html-content [:html [:body [:a {:href (str "http://localhost:3001/?token=" token)} "login"]]]
+        content (hiccup/html html-content)
+        _ (println content)
         postal-response (postal/send-message (:connection @atoms/postal)
                                              {:from    (get-in @atoms/postal [:connection :user])
                                               :to      email-address
                                               :subject "login token"
-                                              :body    token})
+                                              :body    [{:type "text/html"
+                                                         :content content}]})
         success (= (:error postal-response) :SUCCESS)]
     (if (not success) (println postal-response))
     (sente-server/chsk-send! client-id
