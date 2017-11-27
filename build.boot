@@ -17,7 +17,8 @@
                   [reagent "0.7.0"]
                   [reagent-utils "0.2.1"]
                   [com.cognitect/transit-clj "0.8.290"]
-                  [com.cognitect/transit-cljs "0.8.239"]])
+                  [com.cognitect/transit-cljs "0.8.239"]
+                  [com.draines/postal "2.0.2"]])
 
 (require
  '[adzerk.boot-cljs      :refer [cljs]]

@@ -73,6 +73,10 @@
   [{:as ev-msg :keys [?data]}]
   (chsk-recv (?data 0) (?data 1)))
 
+(defmethod event-msg-handler :chsk/ws-ping
+  [ev-msg]
+  ())
+
 (defmethod event-msg-handler :chsk/handshake
   [{:as ev-msg :keys [?data]}]
   (let [[?uid ?csrf-token ?handshake-data] ?data]

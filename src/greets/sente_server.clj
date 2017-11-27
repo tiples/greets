@@ -118,8 +118,7 @@
       ;; (future (-event-msg-handler ev-msg)) ; Handle event-msgs on a thread pool
       )
 
-(defmethod -event-msg-handler
-           :default                                         ; Default/fallback case (no other matching handler)
+(defmethod -event-msg-handler   :default                                         ; Default/fallback case (no other matching handler)
            [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
            (let [session (:session ring-req)
                  uid (:uid session)]
@@ -127,13 +126,11 @@
                 (when ?reply-fn
                       (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
 
-(defmethod -event-msg-handler
-  :chsk/ws-ping
+(defmethod -event-msg-handler :chsk/ws-ping
   [ev-msg]
   ())
 
-(defmethod -event-msg-handler
-  :chsk/uidport-open
+(defmethod -event-msg-handler :chsk/uidport-open
   [ev-msg]
   ())
 

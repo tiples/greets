@@ -2,6 +2,7 @@
   (:require
     [clojure.edn :as edn]
     [hiccup.core :as hiccup]
+    [postal.core :as postal]
     [greets.sente-server :as sente-server]
     [greets.atoms-server :as atoms]
     [greets.files :as files]
