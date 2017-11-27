@@ -13,12 +13,14 @@
   ())
 
 (defn valid-token-request
-  [client-id email-address]
+  [client-id email-address origin]
   (let [account (get @atoms/email-addresses email-address)
         token (login-tokens/make-token account)
-        html-content [:html [:body [:a {:href (str "http://localhost:3001/?token=" token)} "login"]]]
+        html-content [:html
+                      [:body
+                       [:a {:href (str origin "/?token=" token)} "Click here to login."]
+                       ]]
         content (hiccup/html html-content)
-        _ (println content)
         postal-response (postal/send-message (:connection @atoms/postal)
                                              {:from    (get-in @atoms/postal [:connection :user])
                                               :to      email-address
@@ -39,9 +41,12 @@
         ?data (:?data ev-msg)
         email-address (:email-address ?data)
         email-addresses @atoms/email-addresses
-        valid-email-address (contains? email-addresses email-address)]
+        valid-email-address (contains? email-addresses email-address)
+        ring-req (:ring-req ev-msg)
+        headers (:headers ring-req)
+        origin (get headers "origin")]
     (if valid-email-address
-      (valid-token-request client-id email-address)
+      (valid-token-request client-id email-address origin)
       (sente-server/chsk-send! client-id
                                [:login-token/token-status-message
                                 {:value "Unknown email address."}]))))
