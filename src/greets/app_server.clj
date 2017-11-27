@@ -49,9 +49,10 @@
   (reset! atoms/email-addresses
           (reduce
             (fn [email-addresses e]
-              (let [email-address (:email (val e))]
-                (conj email-addresses email-address)))
-            #{}
+              (let [account (key e)
+                    email-address (:email (val e))]
+                (assoc email-addresses email-address account)))
+            {}
             (:accounts @atoms/accounts))))
 
 (defn -main "For `lein run`, etc."
