@@ -12,28 +12,35 @@
   [ev-msg]
   ())
 
+(defn send-email
+  [email-address content]
+  (try
+    (postal/send-message (:connection @atoms/postal)
+                         {:from    (get-in @atoms/postal [:connection :user])
+                          :to      email-address
+                          :subject "login token"
+                          :body    [{:type    "text/html"
+                                     :content content}]})
+    (catch Exception e
+      {:error :Unknown-host})))
+
 (defn valid-token-request
   [client-id email-address origin]
-  (let [account (get @atoms/email-addresses email-address)
-        token (login-tokens/make-token account)
+  (let [account-kw (get @atoms/email-addresses email-address)
+        token (login-tokens/make-token account-kw)
         html-content [:html
                       [:body
                        [:a {:href (str origin "/?token=" token)} "Click here to login."]
                        ]]
         content (hiccup/html html-content)
-        postal-response (postal/send-message (:connection @atoms/postal)
-                                             {:from    (get-in @atoms/postal [:connection :user])
-                                              :to      email-address
-                                              :subject "login token"
-                                              :body    [{:type "text/html"
-                                                         :content content}]})
+        postal-response (send-email email-address content)
         success (= (:error postal-response) :SUCCESS)]
     (if (not success) (println postal-response))
     (sente-server/chsk-send! client-id
                              [:login-token/token-status-message
                               {:value (if success
                                         "Sending the login token. Please check your emails."
-                               "There was an error encountered when sending the login token")}])))
+                                        "There was an error encountered when sending the login token")}])))
 
 (defmethod sente-server/-event-msg-handler :login-token/request
   [ev-msg]
@@ -51,14 +58,35 @@
                                [:login-token/token-status-message
                                 {:value "Unknown email address."}]))))
 
+(defn login-failure
+  [client-id token]
+  (sente-server/chsk-send! client-id
+                           [:login-token/account-status-message
+                            {:value "Login failure. Token invalidated."}]))
+
+(defn login
+  [client-id account-kw]
+  ;todo create session
+  (sente-server/chsk-send! client-id
+                           [:login-token/account-status-message
+                            {:value nil}]))
+
+(defmethod sente-server/-event-msg-handler :login-token/account
+  [ev-msg]
+  (let [client-id (:client-id ev-msg)
+        ?data (:?data ev-msg)
+        token (:token ?data)
+        account (:account ?data)
+        account-kw (keyword account)
+        aacount-kw (login-tokens/get-account token)]
+    (if (= account-kw aacount-kw)
+      (login client-id account-kw)
+      (login-failure client-id token))))
+
 (defn landing-pg-handler
   [ring-req]
   (let [params (:params ring-req)
-        token (:token params)
-        token-status-message (if (nil? token)
-                               (str "Please enter your registered email address "
-                                    "(above) to receive a one-time login token.")
-                               nil)]
+        token (:token params)]
     (hiccup/html
       [:head
        [:meta {:charset "utf-8"}]
@@ -66,7 +94,6 @@
        [:meta {:name "description" :content ""}]
        [:title "greets"]]
       [:body
-       [:input {:type "hidden" :id "tokenStatusMessage" :value token-status-message}]
        [:input {:type "hidden" :id "token" :value token}]
        [:div {:id "container"}]
        [:script {:type "text/javascript" :src "app.js"}]])))

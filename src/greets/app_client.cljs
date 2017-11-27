@@ -23,21 +23,42 @@
   [id ?data]
   (reset! atoms/token-status-message (:value ?data)))
 
-(defn got-login-token
+(defn get-account
   [token]
-  [:p (str "token=" token)])
+  [:div
+   [:form
+    {:on-submit
+     (fn [e]
+       (.preventDefault e)
+       (reset! atoms/user-account (.. e -target -elements -message -value))
+       (chsk-send! [:login-token/account {:token token
+                                          :account @atoms/user-account}]))}
+    [:label "Account name: "]
+    [:input {:name "message" :type "text" :autoFocus true}]
+    [:input {:type "submit" :value "send"}]]
+   [:p @atoms/account-status-message]])
+
+(defmethod client/chsk-recv :login-token/account-status-message
+  [id ?data]
+  (reset! atoms/account-status-message (:value ?data)))
+
+(defn logged-in
+  []
+  [:p (str @atoms/user-account)])
 
 (defn calling-component
   []
   (reagent/with-let
     [token-element (.getElementById js/document "token")
      token (.getAttribute token-element "value")
-     token-status-message-element (.getElementById js/document "tokenStatusMessage")
-     token-status-message (.getAttribute token-status-message-element "value")]
-    (reset! atoms/token-status-message token-status-message)
-    (if (some? token)
-      [got-login-token token]
-      [get-login-token])))
+     _ (reset! atoms/token-status-message (str "Please enter your registered email address "
+                                               "(above) to receive a one-time login token."))
+     _ (reset! atoms/account-status-message "Please enter your account name to complete the login.")]
+    (if (nil? token)
+      [get-login-token]
+      (if (some? @atoms/account-status-message)
+        [get-account token]
+        [logged-in]))))
 
 (defn start!
   []
