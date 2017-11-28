@@ -67,7 +67,7 @@
                            [:login-token/account-status-message
                             {:value nil}]))
 
-(defmethod sente-server/-event-msg-handler :chsk/uidport-close ;todo close session, if any
+(defmethod sente-server/-event-msg-handler :chsk/uidport-close
   [ev-msg]
   (let [client-id (:client-id ev-msg)]
     (swap! atoms/sessions dissoc client-id)))
