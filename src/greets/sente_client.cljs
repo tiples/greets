@@ -71,9 +71,11 @@
 
 (defmethod event-msg-handler :chsk/recv
   [{:as ev-msg :keys [?data]}]
-  (chsk-recv (?data 0) (?data 1)))
+  (if (= (count ?data) 1)
+    (chsk-recv (?data 0) nil)
+    (chsk-recv (?data 0) (?data 1))))
 
-(defmethod event-msg-handler :chsk/ws-ping
+(defmethod chsk-recv :chsk/ws-ping
   [ev-msg]
   ())
 
