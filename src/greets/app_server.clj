@@ -8,10 +8,6 @@
     [greets.files :as files]
     [greets.login-tokens :as login-tokens]))
 
-(defmethod sente-server/-event-msg-handler :chsk/uidport-close ;todo close session, if any
-  [ev-msg]
-  ())
-
 (defn send-email
   [email-address content]
   (try
@@ -66,10 +62,15 @@
 
 (defn login
   [client-id account-kw]
-  ;todo create session
+  (swap! atoms/sessions assoc client-id {:account account-kw})
   (sente-server/chsk-send! client-id
                            [:login-token/account-status-message
                             {:value nil}]))
+
+(defmethod sente-server/-event-msg-handler :chsk/uidport-close ;todo close session, if any
+  [ev-msg]
+  (let [client-id (:client-id ev-msg)]
+    (swap! atoms/sessions dissoc client-id)))
 
 (defmethod sente-server/-event-msg-handler :login-token/account
   [ev-msg]

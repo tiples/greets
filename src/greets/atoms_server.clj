@@ -6,3 +6,4 @@
 (def login-tokens (atom nil))
 (def max-token-life-millis (atom nil))
 (def postal (atom nil))
+(def sessions (atom nil))

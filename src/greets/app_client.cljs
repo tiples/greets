@@ -55,7 +55,7 @@
 
 (defn logged-in
   []
-  [:p (str @atoms/user-account)])
+  [:p (str "Welcome " @atoms/user-account)])
 
 (defn calling-component
   []
