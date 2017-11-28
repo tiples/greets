@@ -14,7 +14,6 @@
       [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
       [taoensso.sente :as sente]
 
-      ;;; TODO Choose (uncomment) a supported web server + adapter -------------
       [org.httpkit.server :as http-kit]
       [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
       ;;
