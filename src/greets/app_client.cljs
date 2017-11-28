@@ -5,6 +5,25 @@
             [reagent.core :as reagent :refer [atom]]
             [taoensso.sente :as sente :refer (cb-success?)]))
 
+(defn initialize-status-messages
+  []
+  (reset! atoms/token-status-message (str "Please enter your registered email address "
+                                          "(above) to receive a one-time login token."))
+  (reset! atoms/account-status-message "Please enter your account name to complete the login."))
+
+(defmethod client/chsk-recv :login-token/reset-status-messages
+  [id ?data]
+  (initialize-status-messages)
+  (reset! atoms/token-status-message (str (:value ?data) " " @atoms/token-status-message)))
+
+(defmethod client/chsk-recv :login-token/token-status-message
+  [id ?data]
+  (reset! atoms/token-status-message (:value ?data)))
+
+(defmethod client/chsk-recv :login-token/account-status-message
+  [id ?data]
+  (reset! atoms/account-status-message (:value ?data)))
+
 (defn get-login-token
   []
   [:div
@@ -18,10 +37,6 @@
     [:input {:name "message" :type "text" :autoFocus true}]
     [:input {:type "submit" :value "send"}]]
    [:p @atoms/token-status-message]])
-
-(defmethod client/chsk-recv :login-token/token-status-message
-  [id ?data]
-  (reset! atoms/token-status-message (:value ?data)))
 
 (defn get-account
   [token]
@@ -38,10 +53,6 @@
     [:input {:type "submit" :value "send"}]]
    [:p @atoms/account-status-message]])
 
-(defmethod client/chsk-recv :login-token/account-status-message
-  [id ?data]
-  (reset! atoms/account-status-message (:value ?data)))
-
 (defn logged-in
   []
   [:p (str @atoms/user-account)])
@@ -51,10 +62,9 @@
   (reagent/with-let
     [token-element (.getElementById js/document "token")
      token (.getAttribute token-element "value")
-     _ (reset! atoms/token-status-message (str "Please enter your registered email address "
-                                               "(above) to receive a one-time login token."))
-     _ (reset! atoms/account-status-message "Please enter your account name to complete the login.")]
-    (if (nil? token)
+     _ (initialize-status-messages)
+     _ (if (some? token) (reset! atoms/token-status-message nil))]
+    (if (some? @atoms/token-status-message)
       [get-login-token]
       (if (some? @atoms/account-status-message)
         [get-account token]

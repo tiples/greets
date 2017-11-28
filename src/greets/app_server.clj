@@ -61,7 +61,7 @@
 (defn login-failure
   [client-id token]
   (sente-server/chsk-send! client-id
-                           [:login-token/account-status-message
+                           [:login-token/reset-status-messages
                             {:value "Login failure. Token invalidated."}]))
 
 (defn login
