@@ -78,7 +78,7 @@
         token (:token ?data)
         account (:account ?data)
         account-kw (keyword account)
-        aacount-kw (login-tokens/get-account token)]
+        aacount-kw (login-tokens/remove-token token)]
     (if (= account-kw aacount-kw)
       (login client-id account-kw)
       (login-failure client-id token))))
