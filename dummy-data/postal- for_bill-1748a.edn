@@ -1,0 +1,4 @@
+{:connection {:host "smtp.gmail.com"
+              :ssl true
+              :user "laforge49@gmail.com"
+              :pass "XXX"}}
