@@ -18,6 +18,7 @@
                           :body    [{:type    "text/html"
                                      :content content}]})
     (catch Exception e
+      (println (.getMessage e))
       {:error :Unknown-host})))
 
 (defn valid-token-request
