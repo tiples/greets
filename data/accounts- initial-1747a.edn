@@ -1,2 +1,4 @@
 {:accounts {:bill {:email "laforge49@gmail.com"
                    :permissions [:dev :designer :author]}}}
+{:accounts {:nokas {:email "oodalogin@gmail.com"
+                   :permissions [:dev :designer :author]}}}
