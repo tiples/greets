@@ -6,7 +6,8 @@
     [greets.sente-server :as sente-server]
     [greets.atoms-server :as atoms]
     [greets.files :as files]
-    [greets.login-tokens :as login-tokens]))
+    [greets.login-tokens :as login-tokens]
+    [greets.db :as db]))
 
 (defn send-email
   [email-address content]

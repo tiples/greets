@@ -14,19 +14,20 @@
 (defn initialize
   [db-atom folder base label value]
   (reset! db-atom {:folder folder
-                   :base base
-                   :label label
-                   :value value}))
+                   :base   base
+                   :label  label
+                   :value  value}))
 
 (defn close-journal
   [db-atom]
-  (swap! db-atom (fn [db]
-                   (let [journal-writer (:journal-writer db)]
-                     (if (nil? journal-writer)
-                       db
-                       (do
-                         (.close journal-writer)
-                         (dissoc db :journal-writer)))))))
+  (swap! db-atom
+         (fn [db]
+           (let [journal-writer (:journal-writer db)]
+             (if (nil? journal-writer)
+               db
+               (do
+                 (.close journal-writer)
+                 (dissoc db :journal-writer)))))))
 
 (defn build-file-name
   [db-atom file-prefix]

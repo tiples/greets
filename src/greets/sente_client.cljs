@@ -84,8 +84,6 @@
   (let [[?uid ?csrf-token ?handshake-data] ?data]
     (->output! "Handshake: %s" ?data)))
 
-;; TODO Add your (defmethod -event-msg-handler <event-id> [ev-msg] <body>)s here...
-
 ;;;; Sente event router (our `event-msg-handler` loop)
 
 (defonce router_ (atom nil))

@@ -4,14 +4,7 @@
     [clojure.java.io :as io]
     [clojure.string :as str])
   (:import (java.text SimpleDateFormat)
-           (java.util Date TimeZone)))
-
-(defn file-timestamp
-  []
-  (let [formatter (SimpleDateFormat. "yywwu_HHmmss")
-        _ (.setTimeZone formatter (TimeZone/getTimeZone "GMT"))
-        now (Date.)]
-    (.format formatter now)))
+           (java.util TimeZone Date)))
 
 ;To access a file, you need:
 ;1. the folder it is in
@@ -39,6 +32,14 @@
 ;3. base file name picture_description
 ;5. file suffix 1736b
 ;6. file extension csv
+
+(defn file-timestamp
+  []
+  (let [formatter (SimpleDateFormat. "yywwu_HHmmss_SSS")
+        _ (.setTimeZone formatter (TimeZone/getTimeZone "GMT"))
+        now (Date.)]
+    (Thread/sleep 1)
+    (.format formatter now)))
 
 (defn file-map
   [folder prefix base label suffix extension]
