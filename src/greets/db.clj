@@ -101,9 +101,15 @@
         folder (:folder db)
         base (:base db)
         files (files/resolve-files folder "journal" base "edn")
-        ledger-suffix (:suffix db)]
+        ledger-suffix (:suffix db)
+        last-journal-mapentry (last files)
+        last-suffix (if (nil? last-journal-mapentry)
+                      nil
+                      (key last-journal-mapentry))]
     (for [e files]
       (let [journal-suffix (key e)
             journal-filemap (val e)]
-        (if (< (compare journal-suffix ledger-suffix) 0)
-          (load-journal! db-atom (files/file-str journal-filemap)))))))
+        (if (> (compare journal-suffix ledger-suffix) 0)
+          (load-journal! db-atom (files/file-str journal-filemap)))))
+    (if (> (compare last-suffix ledger-suffix) 0)
+      (write-ledger! db-atom))))
