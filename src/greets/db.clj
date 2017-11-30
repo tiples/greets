@@ -67,4 +67,4 @@
   [db-atom journal-entry]
   (let [journal-writer (open-journal db-atom)
         journal-entry-edn (pr-str journal-entry)]
-    (.write journal-writer (str journal-entry-edn "\n"))))
+    (doto journal-writer (.write (str journal-entry-edn "\n")) (.flush))))
