@@ -71,3 +71,16 @@
   (let [journal-writer (open-journal db-atom)
         journal-entry-edn (pr-str journal-entry)]
     (doto journal-writer (.write (str journal-entry-edn "\n")) (.flush))))
+
+(defn load-ledger
+  [db]
+  (let [folder (:folder db)
+        base (:base db)
+        file-map (files/resolve-file folder "ledger" base "edn")
+        label (:label file-map)
+        db (assoc db :label label)
+        suffix (:suffix file-map)
+        db (assoc db :suffix suffix)
+        value (files/load-edn-file file-map)
+        db (assoc db :value value)]
+    db))

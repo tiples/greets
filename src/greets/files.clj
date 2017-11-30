@@ -143,9 +143,11 @@
         (throw (Exception. "Missing file"))))))
 
 (defn load-edn-file
-  [edn-filemap contentmap-atom]
-  (let [edn-filename (file-str edn-filemap)
-        _ (println "Loading file" edn-filename)
-        edn-string (slurp edn-filename)
-        edn-map (edn/read-string edn-string)]
-    (reset! contentmap-atom edn-map)))
+  ([edn-filemap]
+   (let [edn-filename (file-str edn-filemap)
+         _ (println "Loading file" edn-filename)
+         edn-string (slurp edn-filename)
+         edn-map (edn/read-string edn-string)]
+     edn-map))
+  ([edn-filemap contentmap-atom]
+     (reset! contentmap-atom (load-edn-file edn-filemap))))
