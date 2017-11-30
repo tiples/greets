@@ -3,17 +3,13 @@
     [clojure.edn :as edn]
     [clojure.java.io :as io]
     [clojure.string :as str]
-    [greets.files :as files])
-  (:import (java.util Date TimeZone)
-           (java.text SimpleDateFormat)))
+    [greets.files :as files]))
 
-(defn timestamp
-  []
-  (let [formatter (SimpleDateFormat. "yywwu_HHmmss_SSS")
-        _ (.setTimeZone formatter (TimeZone/getTimeZone "GMT"))
-        now (Date.)]
-    (Thread/sleep 1)
-    (.format formatter now)))
+(defmulti journal-entry-handler :journal-entry-id)
+
+(defmethod journal-entry-handler :default
+  [journal-entry]
+  (throw (Exception. (str "Unrecognized Journal-entry-id: " (:journal-entry-id journal-entry)))))
 
 (defn initialize
   [db-atom folder base label value]
@@ -38,7 +34,7 @@
         folder (:folder db)
         base (:base db)
         label (:label db)
-        suffix (timestamp)
+        suffix (files/file-timestamp)
         file-map (files/file-map folder file-prefix base label suffix "edn")]
     (files/file-str file-map)))
 
@@ -63,8 +59,9 @@
         (swap! db-atom assoc :journal-writer journal-writer)
         journal-writer))))
 
-(defn write-journal-entry
+(defn post-journal-entry
   [db-atom journal-entry]
+  (journal-entry-handler journal-entry)
   (let [journal-writer (open-journal db-atom)
         journal-entry-edn (pr-str journal-entry)]
     (doto journal-writer (.write (str journal-entry-edn "\n")) (.flush))))
