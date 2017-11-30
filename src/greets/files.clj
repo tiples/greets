@@ -93,7 +93,7 @@
         base (if (empty? base) nil base)]
     (file-map folder prefix base label suffix extension)))
 
-(defn get-file-name-
+(defn get-file-names
   [folder pre post]
   (let [names (.list (io/as-file folder))
         file-names (reduce
@@ -112,7 +112,7 @@
                      names)]
     file-names))
 
-(defn resolve-file-
+(defn resolve-files
   [folder prefix base extension]
   (let [pre (str (if (some? prefix)
                    (str prefix "-")
@@ -121,17 +121,14 @@
                    (str base " ")
                    ""))
         post (str "." extension)
-        file-names (get-file-name- folder pre post)
-        lst (last (seq file-names))]
-    (if (nil? lst)
-      nil
-      (val lst))))
+        file-names (get-file-names folder pre post)]
+    (seq file-names)))
 
 (defn resolve-file
   [folder prefix base extension]
-  (let [rf (resolve-file- folder prefix base extension)]
+  (let [rf (resolve-files folder prefix base extension)]
     (if (some? rf)
-      rf
+      (val (last rf))
       (let [pre (str (if (some? prefix)
                        (str prefix "-")
                        "")
