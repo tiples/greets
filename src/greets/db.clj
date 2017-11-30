@@ -73,14 +73,23 @@
     (doto journal-writer (.write (str journal-entry-edn "\n")) (.flush))))
 
 (defn load-ledger
-  [db]
-  (let [folder (:folder db)
-        base (:base db)
-        file-map (files/resolve-file folder "ledger" base "edn")
-        label (:label file-map)
-        db (assoc db :label label)
-        suffix (:suffix file-map)
-        db (assoc db :suffix suffix)
-        value (files/load-edn-file file-map)
-        db (assoc db :value value)]
-    db))
+  [db-atom]
+  (swap! db-atom
+         (fn [db]
+           (let [folder (:folder db)
+                 base (:base db)
+                 file-map (files/resolve-file folder "ledger" base "edn")
+                 label (:label file-map)
+                 db (assoc db :label label)
+                 suffix (:suffix file-map)
+                 db (assoc db :suffix suffix)
+                 value (files/load-edn-file file-map)
+                 db (assoc db :value value)]
+             db))))
+
+(defn load-journal
+  [db-atom journal-filename]
+  (println "Loading file" journal-filename)
+  (with-open [journal-reader (io/writer journal-filename :encoding "UTF-8")]
+    (for [journal-entry (line-seq journal-reader)]
+      (post-journal-entry db-atom journal-entry))))
