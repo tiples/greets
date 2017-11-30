@@ -3,9 +3,13 @@
   {:Accounts
    {:has_member
     {:bill  {:email       "laforge49@gmail.com"
-             :permissions [:dev :designer :author]}
+             :permissions [:dev
+                           :designer
+                           :author]}
      :nokas {:email       "oodalogin@gmail.com"
-             :permissions [:dev :designer :author]}}}}}
+             :permissions [:dev
+                           :designer
+                           :author]}}}}}
  :entity-context
  {:App      [:app]
   :Accounts [:App :Accounts]
@@ -13,4 +17,7 @@
   :nokas    [:App :Accounts :nokas]}
  :predicates
  [:has_application_rolon
-  :has_member]}
+  :has_member]
+ :list-attributes
+ [:permissions]
+ }
