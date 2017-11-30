@@ -1,5 +1,16 @@
-{:accounts
- {:bill  {:email       "laforge49@gmail.com"
-          :permissions [:dev :designer :author]}
-  :nokas {:email       "oodalogin@gmail.com"
-          :permissions [:dev :designer :author]}}}
+{:App
+ {:has_application_rolon
+  {:Accounts
+   {:has_member
+    {:bill  {:email       "laforge49@gmail.com"
+             :permissions [:dev :designer :author]}
+     :nokas {:email       "oodalogin@gmail.com"
+             :permissions [:dev :designer :author]}}}}}
+ :entity-context
+ {:App      [:app]
+  :Accounts [:App :Accounts]
+  :bill     [:App :Accounts :bill]
+  :nokas    [:App :Accounts :nokas]}
+ :predicates
+ [:has_application_rolon
+  :has_member]}
