@@ -10,9 +10,8 @@
   []
   (let [formatter (SimpleDateFormat. "yywwu_HHmmss")
         _ (.setTimeZone formatter (TimeZone/getTimeZone "GMT"))
-        now (Date.)
-        result (.format formatter now)]
-    (println :gmt result)))
+        now (Date.)]
+    (.format formatter now)))
 
 ;To access a file, you need:
 ;1. the folder it is in
