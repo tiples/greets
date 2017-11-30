@@ -110,7 +110,8 @@
                     email-address (:email (val e))]
                 (assoc email-addresses email-address account)))
             {}
-            (get-in @atoms/accounts-db [:value :accounts]))))
+            (get-in @atoms/accounts-db
+                    [:value :App :has_application_rolon :Accounts :has_member]))))
 
 (defn -main "For `lein run`, etc."
   []
