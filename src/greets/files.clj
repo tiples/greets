@@ -2,7 +2,17 @@
   (:require
     [clojure.edn :as edn]
     [clojure.java.io :as io]
-    [clojure.string :as str]))
+    [clojure.string :as str])
+  (:import (java.text SimpleDateFormat)
+           (java.util Date TimeZone)))
+
+(defn file-timestamp
+  []
+  (let [formatter (SimpleDateFormat. "yywwu_HHmmss")
+        _ (.setTimeZone formatter (TimeZone/getTimeZone "GMT"))
+        now (Date.)
+        result (.format formatter now)]
+    (println :gmt result)))
 
 ;To access a file, you need:
 ;1. the folder it is in
@@ -64,8 +74,8 @@
   [file-str]
   (let [i (str/last-index-of file-str "/")
         [folder r] (if (nil? i)
-                 [nil file-str]
-                 [(subs file-str 0 i) (subs file-str (+ i 1))])
+                     [nil file-str]
+                     [(subs file-str 0 i) (subs file-str (+ i 1))])
         ldot (str/last-index-of r ".")
         extension (subs r (+ ldot 1))
         r (subs r 0 ldot)
@@ -97,9 +107,9 @@
                              (if (nil? i)
                                file-names
                                (let [fm (parse-file (str folder "/" name))]
-                                   (assoc file-names (:suffix fm) fm)))))))
-                       (sorted-map)
-                       names)]
+                                 (assoc file-names (:suffix fm) fm)))))))
+                     (sorted-map)
+                     names)]
     file-names))
 
 (defn resolve-file-
@@ -133,9 +143,9 @@
         (throw (Exception. "Missing file"))))))
 
 (defn load-edn-file
-      [edn-filemap contentmap-atom]
-      (let [edn-filename (file-str edn-filemap)
-            _ (println "Loading file" edn-filename)
-            edn-string (slurp edn-filename)
-            edn-map (edn/read-string edn-string)]
-           (reset! contentmap-atom edn-map)))
+  [edn-filemap contentmap-atom]
+  (let [edn-filename (file-str edn-filemap)
+        _ (println "Loading file" edn-filename)
+        edn-string (slurp edn-filename)
+        edn-map (edn/read-string edn-string)]
+    (reset! contentmap-atom edn-map)))
