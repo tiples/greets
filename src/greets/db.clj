@@ -63,7 +63,11 @@
 
 (defn post-journal-entry
   [db-atom journal-entry]
-  (swap! db-atom journal-entry-handler journal-entry)
+  (swap! db-atom journal-entry-handler journal-entry))
+
+(defn write-journal-entry
+  [db-atom journal-entry]
+  (post-journal-entry db-atom journal-entry)
   (let [journal-writer (open-journal db-atom)
         journal-entry-edn (pr-str journal-entry)]
     (doto journal-writer (.write (str journal-entry-edn "\n")) (.flush))))
