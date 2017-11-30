@@ -5,10 +5,11 @@
     [clojure.string :as str]
     [greets.files :as files]))
 
-(defmulti journal-entry-handler :journal-entry-id)
+(defmulti journal-entry-handler
+          (fn [db-atom journal-entry] (:journal-entry-id journal-entry)))
 
 (defmethod journal-entry-handler :default
-  [journal-entry]
+  [db-atom journal-entry]
   (throw (Exception. (str "Unrecognized Journal-entry-id: " (:journal-entry-id journal-entry)))))
 
 (defn initialize
@@ -62,7 +63,7 @@
 
 (defn post-journal-entry
   [db-atom journal-entry]
-  (journal-entry-handler journal-entry)
+  (journal-entry-handler db-atom journal-entry)
   (let [journal-writer (open-journal db-atom)
         journal-entry-edn (pr-str journal-entry)]
     (doto journal-writer (.write (str journal-entry-edn "\n")) (.flush))))
