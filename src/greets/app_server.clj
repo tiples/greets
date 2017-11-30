@@ -110,13 +110,15 @@
                     email-address (:email (val e))]
                 (assoc email-addresses email-address account)))
             {}
-            (:accounts @atoms/accounts))))
+            (get-in @atoms/accounts-db [:value :accounts]))))
 
 (defn -main "For `lein run`, etc."
   []
   (reset! atoms/app-handler landing-pg-handler)
-  (files/load-edn-file (files/resolve-file "data" "accounts" nil "edn") atoms/accounts)
   (files/load-edn-file (files/resolve-file "private-data" "postal" nil "edn") atoms/postal)
+  (db/initialize! atoms/accounts-db "dbs/accounts" "accounts" "initial" {})
+  (db/load-db! atoms/accounts-db)
+  (println (pr-str @atoms/accounts-db))
   (register-email-addresses)
   (login-tokens/initialize 10)                              ;max token life is 10 min
   (sente-server/start! 3001))
