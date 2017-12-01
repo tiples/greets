@@ -12,6 +12,20 @@
   [db journal-entry]
   (throw (Exception. (str "Unrecognized Journal-entry-id: " (:journal-entry-id journal-entry)))))
 
+(defmethod journal-entry-handler :assign
+  [db journal-entry]
+  (let [context (:context journal-entry)
+        entity (:entity journal-entry)
+        attribute-path (:attribute-path journal-entry)
+        attribute-value (:attribute-value journal-entry)
+        context-entity (first context)
+        context-entity-path (into [:value] (get-in db [:value :entity-context context-entity]))
+        context-path (into context-entity-path (rest context))
+        entity-path (conj context-path entity)
+        full-attribute-path (into entity-path attribute-path)
+        db (assoc db full-attribute-path attribute-value)]
+    db))
+
 (defn initialize!
   [db-atom folder base label value]
   (reset! db-atom {:folder folder

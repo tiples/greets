@@ -111,7 +111,7 @@
                 (assoc email-addresses email-address account)))
             {}
             (get-in @atoms/accounts-db
-                    [:value :App :has_application_rolon :Accounts :has_member]))))
+                    [:value :DeckApp :has_application_rolon :Cards :has_member]))))
 
 (defn -main "For `lein run`, etc."
   []
