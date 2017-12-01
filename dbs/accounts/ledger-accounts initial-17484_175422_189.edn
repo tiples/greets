@@ -1,22 +1,53 @@
-{:App
+{:DeckApp
  {:has_application_rolon
+  {:Decks
+   {:Rolontype
+    :application_rolon
+    :has_member
+    {:Framework-Deck
+     {:Decktype :Framework-Decktype}}}}
   {:Accounts
-   {:has_member
-    {:bill  {:email       "laforge49@gmail.com"
-             :permissions [:dev
-                           :designer
-                           :author]}
-     :nokas {:email       "oodalogin@gmail.com"
-             :permissions [:dev
-                           :designer
-                           :author]}}}}}
+   {:Rolontype
+    :application_rolon
+    :has_member
+    {:bill
+     {:Accounttype
+      :Greets-Accounttype
+      :email
+      "laforge49@gmail.com"
+      :permissions
+      [:dev :designer :author]}
+     :nokas
+     {:Accounttype
+      :Greets-Accounttype
+      :email
+      "oodalogin@gmail.com"
+      :permissions
+      [:dev :designer :author]}}}}
+  :has_application_type_rolon
+  {:Decktype
+   {:Rolontype
+    :application_type_rolon
+    :has_decktype_type
+    {:Framework-Decktype
+     {:Rolontype
+      :decktype_type}}}
+   :Accounttype
+   {:Greets-Accounttype
+    {:Rolontype
+     :decktype_type}}}}
  :entity-context
- {:App      [:app]
-  :Accounts [:App :Accounts]
-  :bill     [:App :Accounts :bill]
-  :nokas    [:App :Accounts :nokas]}
+ {:DeckApp
+  [:DeckApp]
+  :Accounts
+  [:DeckApp :has_application_rolon :Accounts]
+  :bill
+  [:DeckApp :has_application_rolon :Accounts :has_member :bill]
+  :nokas
+  [:DeckApp :has_application_rolon :Accounts :has_member :nokas]}
  :predicates
  [:has_application_rolon
+  :has_application_type_rolon
   :has_member]
  :list-attributes
  [:permissions]
