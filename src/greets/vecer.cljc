@@ -22,7 +22,7 @@
   [[db-value transaction-state :as state]
    [op-kw & args :as op]]
   (if (= op-kw :quote)
-    [state op]
+    [state (into [] args)]
     (let [[op-kw key-args positional-args] (normalize-op op)
           [state key-args]
           (reduce
