@@ -13,17 +13,17 @@
 (defn normalize-op
   [[op-kw remaining :as op]]
   (let [key-args (first remaining)
-        [key-args positional-args] (if (map? key-args)
+        [key-args seq-args] (if (map? key-args)
                                      [key-args (rest remaining)]
                                      [{} remaining])]
-    [op-kw key-args positional-args]))
+    [op-kw key-args (into [] seq-args)]))
 
 (defn eval-op
   [[db-value transaction-state :as state]
-   [op-kw remaining :as op]]
+   [op-kw & args :as op]]
   (if (= op-kw :quote)
     [state op]
-    (let [[op-kw key-args positional-args :as op] (normalize-op op)
+    (let [[op-kw key-args positional-args] (normalize-op op)
           [state key-args]
           (reduce
             (fn [[state key-args] e]
@@ -36,7 +36,8 @@
           [state positional-args]
           (reduce
             (fn [[state positional-args] v]
-              (if (vector? v) (eval-op state v) [state v]))
+              (if (vector? v) (eval-op state v) [state v])
+              [state (conj positional-args v)])
             [state []]
             positional-args)]
       (vec-op state [op-kw key-args positional-args]))))
