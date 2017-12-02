@@ -48,6 +48,8 @@
    :Cardtype
    {:Rolontype
     :application_type_rolon
+    :classifier
+    :Cardtype
     :has_decktype_type
     {:Account-Cardtype
      {:Rolontype
@@ -74,10 +76,13 @@
   :Account-Cardtype
   [:DeckApp :has_application_type_rolon :Cardtype :has_decktype_type :Account-Cardtype]
   }
+ :attributes
+ {:Deck
+  [:DeckApp :has_application_rolon :Decks]
+  :Cardtype
+  [:DeckApp :has_application_type_rolon :Cardtype]}
  :predicates
  [:has_application_rolon
   :has_application_type_rolon
   :has_member]
- :list-attributes
- [:permissions]
  }
