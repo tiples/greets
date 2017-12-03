@@ -3,17 +3,12 @@
     [clojure.edn :as edn]
     [clojure.java.io :as io]
     [clojure.string :as str]
-    [greets.files :as files]))
+    [greets.files :as files]
+    [greets.vecer :as vecer]))
 
-(defmulti journal-entry-handler
-          (fn [db journal-entry] (:journal-entry-id journal-entry)))
-
-(defmethod journal-entry-handler :default
-  [db journal-entry]
-  (throw (Exception. (str "Unrecognized Journal-entry-id: " (:journal-entry-id journal-entry)))))
-
-(defmethod journal-entry-handler :assign
-  [db journal-entry]
+(defmethod vec-op :assign
+  [[db transaction-state :as state]
+   [op-kw journal-entry positional-args :as op]]
   (let [context (:context journal-entry)
         entity (:entity journal-entry)
         attribute-path (:attribute-path journal-entry)
@@ -24,7 +19,7 @@
         entity-path (conj context-path entity)
         full-attribute-path (into entity-path attribute-path)
         db (assoc db full-attribute-path attribute-value)]
-    db))
+    [db transaction-state]))
 
 (defn initialize!
   [db-atom folder base label value]
@@ -77,7 +72,8 @@
 
 (defn post-journal-entry!
   [db-atom journal-entry]
-  (swap! db-atom journal-entry-handler journal-entry))
+  (swap! db-atom (fn [db]
+                   (vecer/eval-op [db {}] [(:journal-entry-id journal-enntry) journal-entry]))))
 
 (defn write-journal-entry!
   [db-atom journal-entry]
