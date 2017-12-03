@@ -6,7 +6,7 @@
     [greets.files :as files]
     [greets.vecer :as vecer]))
 
-(defmethod vec-op :assign
+(defmethod vecer/vec-op :assign
   [[db transaction-state :as state]
    [op-kw journal-entry positional-args :as op]]
   (let [context (:context journal-entry)
@@ -73,7 +73,7 @@
 (defn post-journal-entry!
   [db-atom journal-entry]
   (swap! db-atom (fn [db]
-                   (vecer/eval-op [db {}] [(:journal-entry-id journal-enntry) journal-entry]))))
+                   (vecer/eval-op [db {}] [(:journal-entry-id journal-entry) journal-entry]))))
 
 (defn write-journal-entry!
   [db-atom journal-entry]

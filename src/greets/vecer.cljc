@@ -8,7 +8,7 @@
 (defmethod vec-op :default
   [[db-value transaction-state :as state]
    [op-kw key-args positional-args :as op]]
-  (throw (Exception. (str "Unrecognized Journal-entry-id: " (:journal-entry-id journal-entry)))))
+  (throw (Exception. (str "Unrecognized op-kw: " op-kw))))
 
 (defn normalize-op
   [[op-kw remaining :as op]]
