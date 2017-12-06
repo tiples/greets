@@ -1,88 +1,11 @@
-{:DeckApp
- {:has_application_rolon
-  {:Decks
-   {:Rolontype
-    :application_rolon
-    :classifier
-    :Deck
-    :has_member
-    {:Framework-Deck
-     {:Rolontype
-      :particular_rolon
-      :Decktype
-      :Framework-Decktype}}}
-  :Cards
-   {:Rolontype
-    :application_rolon
-    :has_member
-    {:bill
-     {:Rolontype
-      :particular_rolon
-      :Deck
-      :Framework-Deck
-      :Cardtype
-      :Account-Cardtype
-      :email
-      "laforge49@gmail.com"
-      :permissions
-      [:dev :designer :author]}
-     :nokas
-     {:Rolontype
-      :particular_rolon
-      :Deck
-      :Framework-Deck
-      :Cardtype
-      :Account-Cardtype
-      :email
-      "oodalogin@gmail.com"
-      :permissions
-      [:dev :designer :author]}}}}
-  :has_application_type_rolon
-  {:Decktype
-   {:Rolontype
-    :application_type_rolon
-    :has_decktype_type
-    {:Framework-Decktype
-     {:Rolontype
-      :decktype_type}}}
-   :Cardtype
-   {:Rolontype
-    :application_type_rolon
-    :classifier
-    :Cardtype
-    :has_decktype_type
-    {:Account-Cardtype
-     {:Rolontype
-      :decktype_type}}}}}
- :entity-context
- {:DeckApp
-  [:DeckApp]
-  :Cards
-  [:DeckApp :has_application_rolon :Cards]
-  :Decks
-  [:DeckApp :has_application_rolon :Decks]
-  :Framework-Deck
-  [:DeckApp :has_application_rolon :Decks :has_member :Framework-Deck]
-  :bill
-  [:DeckApp :has_application_rolon :Cards :has_member :bill]
+{:accounts
+ {:bill
+  {:email
+   "laforge49@gmail.com"
+   :permissions
+   [:dev :designer :author]}
   :nokas
-  [:DeckApp :has_application_rolon :Cards :has_member :nokas]
-  :Decktype
-  [:DeckApp :has_application_type_rolon :Decktype]
-  :Framework-Decktype
-  [:DeckApp :has_application_type_rolon :Decktype :has_decktype_type :Framework-Decktype]
-  :Cardtype
-  [:DeckApp :has_application_type_rolon :Cardtype]
-  :Account-Cardtype
-  [:DeckApp :has_application_type_rolon :Cardtype :has_decktype_type :Account-Cardtype]
-  }
- :attributes
- {:Deck
-  [:DeckApp :has_application_rolon :Decks]
-  :Cardtype
-  [:DeckApp :has_application_type_rolon :Cardtype]}
- :predicates
- [:has_application_rolon
-  :has_application_type_rolon
-  :has_member]
- }
+  {:email
+   "oodalogin@gmail.com"
+   :permissions
+   [:dev :designer :author]}}}
