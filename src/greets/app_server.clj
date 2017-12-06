@@ -121,4 +121,5 @@
   (db/load-db! atoms/accounts-db)
   (register-email-addresses)
   (login-tokens/initialize 10)                              ;max token life is 10 min
+
   (sente-server/start! 3001))

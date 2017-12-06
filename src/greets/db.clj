@@ -6,19 +6,18 @@
     [greets.files :as files]
     [greets.vecer :as vecer]))
 
-(defmethod vecer/vec-op :assign
+(defmethod vecer/vec-op :new-account
   [[db transaction-state :as state]
    [op-kw journal-entry positional-args :as op]]
-  (let [context (:context journal-entry)
-        entity (:entity journal-entry)
-        attribute-path (:attribute-path journal-entry)
-        attribute-value (:attribute-value journal-entry)
-        context-entity (first context)
-        context-entity-path (into [:value] (get-in db [:value :entity-context context-entity]))
-        context-path (into context-entity-path (rest context))
-        entity-path (conj context-path entity)
-        full-attribute-path (into entity-path attribute-path)
-        db (assoc db full-attribute-path attribute-value)]
+  (let [account (:account journal-entry)
+        account-path [:value :account account]
+        email (:email journal-entry)
+        email-path (conj account-path :email)
+        permissions (:permissions journal-entry)
+        permissions-path (conj account-path :permissions)
+        db (-> db
+               (assoc-in email-path email)
+               (assoc-in permissions-path permissions))]
     [db transaction-state]))
 
 (defn initialize!
