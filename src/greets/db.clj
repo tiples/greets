@@ -6,20 +6,6 @@
     [greets.files :as files]
     [greets.vecer :as vecer]))
 
-(defmethod vecer/vec-op :new-account
-  [[db transaction-state :as state]
-   [op-kw journal-entry positional-args :as op]]
-  (let [account (:account journal-entry)
-        account-path [:value :account account]
-        email (:email journal-entry)
-        email-path (conj account-path :email)
-        permissions (:permissions journal-entry)
-        permissions-path (conj account-path :permissions)
-        db (-> db
-               (assoc-in email-path email)
-               (assoc-in permissions-path permissions))]
-    [db transaction-state]))
-
 (defn initialize!
   [db-atom folder base label value]
   (reset! db-atom {:folder folder
@@ -72,7 +58,10 @@
 (defn post-journal-entry!
   [db-atom journal-entry]
   (swap! db-atom (fn [db]
-                   (vecer/eval-op [db {}] [(:journal-entry-id journal-entry) journal-entry]))))
+                   (first
+                     (vecer/eval-op
+                       [db {}]
+                       [(:journal-entry-id journal-entry) journal-entry])))))
 
 (defn write-journal-entry!
   [db-atom journal-entry]

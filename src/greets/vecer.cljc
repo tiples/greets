@@ -11,7 +11,7 @@
   (throw (Exception. (str "Unrecognized op-kw: " op-kw))))
 
 (defn normalize-op
-  [[op-kw remaining :as op]]
+  [[op-kw & remaining :as op]]
   (let [key-args (first remaining)
         [key-args seq-args] (if (map? key-args)
                                      [key-args (rest remaining)]
@@ -36,8 +36,10 @@
           [state positional-args]
           (reduce
             (fn [[state positional-args] v]
-              (if (vector? v) (eval-op state v) [state v])
-              [state (conj positional-args v)])
+              (let [[state v] (if (vector? v)
+                                 (eval-op state v)
+                                 [state v])]
+              [state (conj positional-args v)]))
             [state []]
             positional-args)]
       (vec-op state [op-kw key-args positional-args]))))

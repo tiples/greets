@@ -3,9 +3,9 @@
   {:email
    "laforge49@gmail.com"
    :permissions
-   [:dev :designer :author]}
+   {:dev true :designer true :author true}}
   :nokas
   {:email
    "oodalogin@gmail.com"
    :permissions
-   [:dev :designer :author]}}}
+   {:dev true :designer true :author true}}}}

@@ -7,7 +7,8 @@
     [greets.atoms-server :as atoms]
     [greets.files :as files]
     [greets.login-tokens :as login-tokens]
-    [greets.db :as db]))
+    [greets.db :as db]
+    [greets.accounts :as accounts]))
 
 (defn send-email
   [email-address content]
@@ -121,5 +122,6 @@
   (db/load-db! atoms/accounts-db)
   (register-email-addresses)
   (login-tokens/initialize 10)                              ;max token life is 10 min
-
+  (let [je (accounts/new-account nil nil (System/currentTimeMillis) :sam "sam@gmail.com" {:author true})]
+    (db/write-journal-entry! atoms/accounts-db je))
   (sente-server/start! 3001))

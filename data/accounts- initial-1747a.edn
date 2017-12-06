@@ -1,5 +1,9 @@
 {:accounts
  {:bill  {:email       "laforge49@gmail.com"
-          :permissions [:dev :designer :author]}
+          :permissions {:dev true
+                        :designer true
+                        :author true}}
   :nokas {:email       "oodalogin@gmail.com"
-          :permissions [:dev :designer :author]}}}
+          :permissions {:dev true
+                        :designer true
+                        :author true}}}}
