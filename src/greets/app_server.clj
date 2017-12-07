@@ -112,7 +112,7 @@
                 (assoc email-addresses email-address account)))
             {}
             (get-in @atoms/accounts-db
-                    [:value :DeckApp :has_application_rolon :Cards :has_member]))))
+                    [:value :accounts]))))
 
 (defn -main "For `lein run`, etc."
   []
@@ -122,6 +122,6 @@
   (db/load-db! atoms/accounts-db)
   (register-email-addresses)
   (login-tokens/initialize 10)                              ;max token life is 10 min
-  (let [je (accounts/new-account nil nil (System/currentTimeMillis) :sam "sam@gmail.com" {:author true})]
+  #_(let [je (accounts/new-account nil nil (System/currentTimeMillis) :sam "sam@gmail.com" {:author true})]
     (db/write-journal-entry! atoms/accounts-db je))
   (sente-server/start! 3001))
