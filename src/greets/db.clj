@@ -88,9 +88,10 @@
 (defn load-journal!
   [db-atom journal-filename]
   (println "Loading file" journal-filename)
-  (with-open [journal-reader (io/writer journal-filename :encoding "UTF-8")]
-    (for [journal-entry (line-seq journal-reader)]
-      (post-journal-entry! db-atom journal-entry))))
+  (with-open [journal-reader (io/reader journal-filename :encoding "UTF-8")]
+    (last (for [journal-entry-string (line-seq journal-reader)]
+            (let [journal-entry (edn/read-string journal-entry-string)]
+              (post-journal-entry! db-atom journal-entry))))))
 
 (defn load-db!
   [db-atom]
@@ -104,10 +105,10 @@
         last-suffix (if (nil? last-journal-mapentry)
                       nil
                       (key last-journal-mapentry))]
-    (for [e files]
+    (last (for [e files]
       (let [journal-suffix (key e)
             journal-filemap (val e)]
         (if (> (compare journal-suffix ledger-suffix) 0)
-          (load-journal! db-atom (files/file-str journal-filemap)))))
+          (load-journal! db-atom (files/file-str journal-filemap))))))
     (if (> (compare last-suffix ledger-suffix) 0)
       (write-ledger! db-atom))))
