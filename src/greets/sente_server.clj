@@ -64,7 +64,7 @@
 (add-watch connected-uids :connected-uids
            (fn [_ _ old new]
                (when (not= old new)
-                     (infof "Connected uids change: %s" new))))
+                 () #_ (infof "Connected uids change: %s" new))))
 
 ;;;; Ring handlers
 
